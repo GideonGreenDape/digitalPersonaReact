@@ -309,7 +309,7 @@ class Pb2 extends Component {
             <div>
               {/* This display the captured image if successfull */}
               {currentImageFinger && (
-                <img
+                <img className="w-[180px] h-[180px] "
                   src={`data:image/png;base64,${currentImageFinger}`}
                   alt={this.state.firstName}
                 />
