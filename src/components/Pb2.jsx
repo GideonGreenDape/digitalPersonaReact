@@ -350,6 +350,7 @@ class Pb2 extends Component {
             <button
               className="bg-darkgreen w-[100px] self-center ml-[20px] mt-[20px] py-[9px] rounded font-bold px-[9px] mb-[6px] text-[13px] text-white font-montserrat "
               onClick={() => {
+                console.log('clicked! dev check');
                 this.handleSubmit();
               }}
             >

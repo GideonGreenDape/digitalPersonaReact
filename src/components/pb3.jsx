@@ -251,7 +251,11 @@ class Pb3 extends Component {
           </div>
           <button
             className="bg-darkgreen w-[100px] self-center mt-[20px] py-[9px] rounded font-bold px-[9px] mb-[6px] text-[13px] text-white font-montserrat "
-            onClick={() => {}}
+            onClick={() => {
+              console.log('clicked! - dev check');
+              
+              this.handleValidate();
+            }}
           >
             Validate
           </button>
