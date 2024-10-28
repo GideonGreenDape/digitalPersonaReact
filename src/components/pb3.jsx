@@ -15,6 +15,11 @@ class Pb3 extends Component {
       errorMessage: null,
       serverResponse: null,
       reader: new FingerprintReader(),
+      firstName: null,
+      lastName: null,
+      middleName: null,
+      profilePicture: null,
+      message: null,
     };
   }
 
@@ -135,7 +140,6 @@ class Pb3 extends Component {
   handleValidate = async () => {
     const { currentImageFinger } = this.state;
 
-    // Check if the image exists
     if (!currentImageFinger) {
       this.setState({ errorMessage: "No fingerprint image captured!" });
       return;
@@ -143,33 +147,33 @@ class Pb3 extends Component {
 
     try {
       // Send the fingerprint image to the server for validation
-      const response = await axios.post("https://authbackend-3ce93569ffa7.herokuapp.com/validatefingerprint", {
-        image: currentImageFinger,
-      });
+      const response = await axios.post(
+        "https://authbackend-3ce93569ffa7.herokuapp.com/validatefingerprint",
+        { imageFile: currentImageFinger },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      // Handle the response from the server
+      console.log("Server response: ", response.data);  // Log the response
+
       if (response.data.message === "Fingerprint match") {
-        const {
-          firstName,
-          lastName,
-          middleName,
-          profilePicture,
-          matchPercentage,
-        } = response.data;
+        const { firstName, lastName, middleName, profilePicture, matchPercentage } = response.data;
         this.setState({
           serverResponse: {
-            message: `Match found: ${firstName} ${middleName} ${lastName} (Match Percentage: ${matchPercentage.toFixed(
-              2
-            )}%)`,
-            profilePicture: profilePicture,
+            message: `Match found: ${firstName} ${middleName} ${lastName} (Match Percentage: ${matchPercentage.toFixed(2)}%)`,
+            firstName,
+            lastName,
+            middleName,
+            profilePicture,
           },
           errorMessage: null,
         });
       } else {
-        // Handle cases where no match is found
         this.setState({
           serverResponse: {
             message: "Fingerprint mismatch",
+            firstName: null,
+            lastName: null,
+            middleName: null,
             profilePicture: null,
           },
           errorMessage: null,
@@ -178,23 +182,17 @@ class Pb3 extends Component {
     } catch (error) {
       console.error("Error validating fingerprint:", error);
       if (error.response) {
-        const errorMessage =
-          error.response.data.message ||
-          "Error validating fingerprint. Please try again.";
-        this.setState({
-          errorMessage: errorMessage,
-        });
+        const errorMessage = error.response.data.message || "Error validating fingerprint. Please try again.";
+        this.setState({ errorMessage });
       } else {
-        this.setState({
-          errorMessage: "Error validating fingerprint. Please try again.",
-        });
+        this.setState({ errorMessage: "Error validating fingerprint. Please try again." });
       }
     }
-  };
+};
+
 
   render() {
-    const { title, currentImageFinger, errorMessage} =
-      this.state;
+    const { title, currentImageFinger, errorMessage } = this.state;
     return (
       <div className="flex flex-col gap-[15px]">
         <h1 className="mt-[20px] self-center font-montserrat text-[15px] font-medium text-darkgreen ">
@@ -252,8 +250,8 @@ class Pb3 extends Component {
           <button
             className="bg-darkgreen w-[100px] self-center mt-[20px] py-[9px] rounded font-bold px-[9px] mb-[6px] text-[13px] text-white font-montserrat "
             onClick={() => {
-              console.log('clicked! - dev check');
-              
+              console.log("clicked! - dev check");
+
               this.handleValidate();
             }}
           >
@@ -262,7 +260,6 @@ class Pb3 extends Component {
         </div>
         {this.state.serverResponse && (
           <>
-            {/* If the response contains validation details */}
             {this.state.serverResponse.message &&
             this.state.serverResponse.firstName ? (
               <div className="flex justify-between mt-[20px]">
@@ -284,7 +281,7 @@ class Pb3 extends Component {
                 <div>
                   {this.state.serverResponse.profilePicture && (
                     <img
-                      src={this.state.serverResponse.profilePicture}
+                      src={`data:image/png;base64,${this.state.serverResponse.profilePicture}`}
                       alt="Profile Picture"
                       style={{ width: "180px", height: "auto" }}
                     />
@@ -292,7 +289,6 @@ class Pb3 extends Component {
                 </div>
               </div>
             ) : (
-              /* Unsuccessful validation */
               <p className="text-red font-montserrat text-[13px] self-center mt-[20px]">
                 {this.state.serverResponse.message || "Fingerprint mismatch"}
               </p>
