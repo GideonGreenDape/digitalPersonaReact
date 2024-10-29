@@ -188,7 +188,7 @@ class Pb2 extends Component {
     formData.append("fingerprintImage", currentImageFinger); // Sending base64 image
 
     try {
-      const response = await axios.post("https://authbackend-3ce93569ffa7.herokuapp.com/upload", formData, {
+      const response = await axios.post("http://localhost:5000/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" }, // Multipart/form-data for files
       });
 

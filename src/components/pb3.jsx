@@ -148,7 +148,7 @@ class Pb3 extends Component {
     try {
       // Send the fingerprint image to the server for validation
       const response = await axios.post(
-        "https://authbackend-3ce93569ffa7.herokuapp.com/validatefingerprint",
+        "http://localhost:5000/validatefingerprint",
         { imageFile: currentImageFinger },
         { headers: { "Content-Type": "application/json" } }
       );
